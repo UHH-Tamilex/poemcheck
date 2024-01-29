@@ -53,6 +53,11 @@ const alignCheck = async () => {
     const xslsheet =  parser.parseFromString(await resp.text(),'text/xml');
     xproc.importStylesheet(xslsheet);
     wordlist.append(xproc.transformToDocument(standOff).firstChild);
+    const tds = wordlist.querySelectorAll('td span');
+    for(const td of [...tds].reverse()) {
+        td.focus();
+        td.blur();
+    }
 };
 
 const refreshTranslation = (lines,wordlist) => {
