@@ -1,0 +1,150 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Alignment checker</title>
+    <link rel="stylesheet" href="./lib/css/tufte.css">
+    <link rel="stylesheet" href="./lib/css/fonts.css">
+    <link rel="stylesheet" href="./lib/css/tst.css">
+    <link rel="stylesheet" href="./lib/css/header.css">
+    <link rel="stylesheet" href="./lib/css/transcription.css">
+    <link rel="stylesheet" href="./lib/css/apparatus.css">
+    <link rel="stylesheet" href="./lib/debugging/prism.css">
+    <link rel="stylesheet" href="./lib/debugging/debugging.css">
+    <script src="./lib/debugging/prism.js" data-manual=""></script>
+    <script type="module" src="index.mjs"></script>
+    <style type="text/css">
+body {
+    position: absolute;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+}
+#input, #output {
+    width: 100vw;
+    left: 0;
+    top: 0;
+    display: flex;
+        
+}
+#suboutput {
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+#align {
+    width: 100vw;
+    text-align: center;
+}
+#input {
+    margin-top: 1rem;
+    flex-direction: row;
+}
+
+#input > div {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin-right: 1rem;
+    margin-left: 1rem;
+}
+
+textarea {
+    height: 50vh;
+    min-height: 200px;
+}
+
+table {
+    width: min-content;
+    border-collapse: collapse;
+    margin-bottom: 0.5rem;
+}
+td {
+    text-align: center;
+    font-size: 1.2rem;
+    line-height: 100%;
+    text-wrap: nowrap;
+    word-break: keep-all;
+    white-space: nowrap;
+}
+td.mismatch {
+    background: rgb(200,200,200);
+}
+td.typo {
+    background: #FF3535;
+}
+
+#alignment {
+    white-space: pre;
+    overflow-y: scroll;
+}
+
+    </style>
+</head>
+<body>
+    <div id="input">
+        <div><label>Metrical text</label><textarea id="metrical">
+கண்ணி கார்நறுங் கொன்றை காமர்
+வண்ண மார்பிற் றாருங் கொன்றை
+ஊர்தி வால்வெள் ளேறே சிறந்த
+சீர்கெழு கொடியு மவ்வே றென்ப
+கறைமிட றணியலு மணிந்தன் றக்கறை	5
+மறைநவி லந்தணர் நுவலவும் படுமே
+பெண்ணுரு வொருதிற னாகின் றவ்வுருத்
+தன்னு ளடக்கிக் கரக்கினுங் கரக்கும்
+பிறைநுதல் வண்ண மாகின் றப்பிறை
+பதினெண் கணனு மேத்தவும் படுமே	10
+எல்லா வுயிர்க்கு மேம மாகிய
+நீரற வறியாக் கரகத்துத்
+தாழ்சடைப் பொலிந்த வருந்தவத் தோற்கே
+        </textarea></div>
+        <div><label>Word split</label><textarea id="wordsplit">
+kaṇṇi kār naṟum koṉṟai kāmar
+vaṇṇam mārpiṉ tārum koṉṟai
+ūrti vāl veḷ ēṟu-ē ciṟanta
+cīr keḻu koṭiyum a+ ~ēṟu eṉpa.
+kaṟai miṭaṟu aṇiyalum aṇintaṉṟu. a+ kaṟai	5
+maṟai navil antaṇar nuvalavum paṭumē.
+peṇ +uru oru tiṟaṉ ākiṉṟu a uru
+taṉ +uḷ aṭakki karakkiṉum karakkum.
+piṟai nutal vaṇṇam ākiṉṟu. a+ piṟai
+patiṉ eṇ kaṇaṉum ēttavum paṭumē.	10
+ellā ~uyirkkum ēmam ākiya
+nīr aṟav* aṟiyā karakattu
+tāḻ caṭai polinta ~arum tavattōṟkē∞
+        </textarea></div>
+        <div>
+            <label>Word-by-word translation</label>
+            <textarea id="engsplit">
+chaplet rainy-season fragrant Koṉṟai beauty(?)
+colour chestiṉ garlandum Koṉṟai 
+vehicle pure white bullē been-superior-
+excellence have- bannerum that- bull they-say
+poison throat adorningum it-adorned that- poison	5
+Veda be-erudite- brahmin(h.) talk(inf.)um happening-ē 
+woman form one side it-became that- form
+self inside held-fast hide-if-even hiding-
+crescent-moon forehead colour it-became that- crescent-moon
+ten eight groupum praise(inf.)um happening-ē 	10
+all life(dat.)um delight become-
+water subside(inf.)/subsiding know-not jar-
+hang-down- matted-locks shone- rare ascetic(h.dat.)ē.
+            </textarea>
+            <div>
+                <input name="lookup" type="checkbox">
+                <label for="lookup">Grammar lookup</label>
+            </div>
+        </div>
+    </div>
+    <div id="align"><button>Align</button></div>
+    <div id="output">
+        <div id="errors"></div>
+        <div id="suboutput">
+        <div id="alignment"></div>
+        <div id="wordlist"></div>
+        </div>
+    </div>
+</body>
+
