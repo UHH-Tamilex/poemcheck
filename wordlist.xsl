@@ -27,7 +27,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:variable name="form"><xsl:value-of select="x:form"/></xsl:variable>
-                    <xsl:value-of select="translate($form,'~+','')"/>
+                    <xsl:value-of select="translate($form,'~+()','')"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:element>
