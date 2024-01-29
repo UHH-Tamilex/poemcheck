@@ -46,6 +46,7 @@
 
 <xsl:template match="x:def">
     <xsl:element name="span">
+    <xsl:attribute name="contenteditable">true</xsl:attribute>
         <xsl:apply-templates/>
     </xsl:element>
     <xsl:text> </xsl:text>

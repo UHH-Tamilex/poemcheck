@@ -44,7 +44,7 @@ const alignCheck = async () => {
 
     makeAlignmentTable(ret.alignment,tamlines,output);
     
-    if(lookup) inputs[1].value = refreshTranslation(tamlines,ret.wordlist);
+    if(lookup) inputs[2].value = refreshTranslation(tamlines,ret.wordlist);
 
     const parser = new DOMParser();
     const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`,'text/xml');
