@@ -55,7 +55,7 @@
     <xsl:for-each select="x:gram">
         <xsl:value-of select="."/>
         <xsl:if test="position() != last()">
-            <xsl:text>, </xsl:text>
+            <xsl:element name="br"/>
         </xsl:if>
     </xsl:for-each>
 </xsl:template>

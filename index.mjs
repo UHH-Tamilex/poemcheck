@@ -55,6 +55,28 @@ const alignCheck = async () => {
     wordlist.append(xproc.transformToDocument(standOff).firstChild);
 };
 
+const refreshTranslation = (lines,wordlist) => {
+    let ret = '';
+    const makeWord = (obj) => {
+        let trans = obj.translation;
+        if(obj.gram && obj.gram.length > 0)
+            trans = trans + '(' + obj.gram.join('') + ')';
+        if(trans === '') trans = '()';
+        return trans;
+    };
+
+    let w = 0;
+    for(const line of lines) {
+        const wordsinline = line.trim().split(/\s+/).length;
+        for(let n=0;n<wordsinline;n++) {
+            ret = ret + makeWord(wordlist[w]) + ' ';
+            w = w + 1;
+        }
+        ret = ret + '\n';
+    }
+    return ret;
+};
+
 window.addEventListener('load',() => {
     document.getElementById('align').querySelector('button').addEventListener('click',alignCheck);
 });
