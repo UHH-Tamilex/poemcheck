@@ -26,7 +26,8 @@
                     <xsl:apply-templates select="x:form[@type='simple']"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates select="x:form"/>
+                    <xsl:variable name="form"><xsl:value-of select="x:form"/></xsl:variable>
+                    <xsl:value-of select="translate($form,'~+','')"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:element>
@@ -47,6 +48,7 @@
 <xsl:template match="x:def">
     <xsl:element name="span">
     <xsl:attribute name="contenteditable">true</xsl:attribute>
+    <xsl:attribute name="spellcheck">true</xsl:attribute>
         <xsl:apply-templates/>
     </xsl:element>
     <xsl:text> </xsl:text>

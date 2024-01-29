@@ -1,6 +1,12 @@
 import { alignWordsplits } from './lib/debugging/aligner.mjs';
 import { Sanscript } from './lib/js/sanscript.mjs';
 import makeAlignmentTable from './lib/debugging/alignmenttable.mjs';
+import { showSaveFilePicker } from 'https://cdn.jsdelivr.net/npm/native-file-system-adapter/mod.js';
+
+const _state = {
+    standOff: null,
+    poem: null
+};
 
 const alignCheck = async () => {
     const output = document.getElementById('alignment');
@@ -36,11 +42,22 @@ const alignCheck = async () => {
 
     warnings.style.border = 'none';
 
-    const text = Sanscript.t(inputs[0].value.trim(),'tamil','iast').replaceAll(/[\s\d]/g,'');
+    const iasted = Sanscript.t(inputs[0].value.trim(),'tamil','iast');
+    const text = iasted.replaceAll(/[\s\d]/g,'');
 
     const lookup = document.querySelector('input[name="lookup"]').checked;
 
     const ret = await alignWordsplits(text,tam,eng,lookup);
+    
+    if(ret.warnings.length > 0) {
+        for(const warning of ret.warnings) {
+            const ws = document.createElement('div');
+            ws.innerHTML = `<b>${ret.warnings}</b> not recognized.`;
+            warnings.append(ws);
+        }
+        warnings.style.border = '1px dotted red';
+        warnings.style.padding = '1rem';
+    }
 
     makeAlignmentTable(ret.alignment,tamlines,output);
     
@@ -48,6 +65,10 @@ const alignCheck = async () => {
 
     const parser = new DOMParser();
     const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`,'text/xml');
+    
+    _state.standOff = `<standOff type="wordsplit">${ret.xml}</standOff>`;
+    _state.poem = formatPoem(iasted);
+
     const xproc = new XSLTProcessor();
     const resp = await fetch('wordlist.xsl');
     const xslsheet =  parser.parseFromString(await resp.text(),'text/xml');
@@ -58,6 +79,7 @@ const alignCheck = async () => {
         td.focus();
         td.blur();
     }
+    document.getElementById('savebutton').style.display = 'inline';
 };
 
 const refreshTranslation = (lines,wordlist) => {
@@ -82,6 +104,26 @@ const refreshTranslation = (lines,wordlist) => {
     return ret;
 };
 
+const formatPoem = str => {
+    const lines = str.split(/\n/).map(l => `<l>${l}</l>`);
+    return `<text xml:lang="ta"><body><div><lg type="edition">${lines.join('')}</lg></div></body></text>`;
+};
+
+const saveAs = async () => {
+    const text = `<TEI>${_state.poem}${_state.standOff}</TEI>`;
+    const file = new Blob([text],{type: 'text/xml;charset=utf-8'});
+    const fileHandle = await showSaveFilePicker({
+        _preferPolyfill: false,
+        suggestedName: 'poem.xml',
+        types: [{description: 'TEI XML', accept: {'text/xml': ['.xml']} }]
+    });
+    const writer = await fileHandle.createWritable();
+    writer.write(file);
+    writer.close();
+
+};
+
 window.addEventListener('load',() => {
-    document.getElementById('align').querySelector('button').addEventListener('click',alignCheck);
+    document.getElementById('alignbutton').addEventListener('click',alignCheck);
+    document.getElementById('savebutton').addEventListener('click',saveAs);
 });

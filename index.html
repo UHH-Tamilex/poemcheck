@@ -28,6 +28,14 @@ body {
     display: flex;
         
 }
+#output {
+    flex-direction: column;
+}
+
+#errors {
+    margin-left: 1rem;
+    width: fit-content;
+}
 #suboutput {
     width: 100vw;
     display: flex;
@@ -92,6 +100,10 @@ td.typo {
 #wordlist td {
     vertical-align: baseline;
 }
+
+#savebutton {
+    display: none;
+}
     </style>
 </head>
 <body>
@@ -107,7 +119,7 @@ td.typo {
             </div>
         </div>
     </div>
-    <div id="align"><button>Align</button></div>
+    <div id="align"><button id="alignbutton">Align</button> <button id="savebutton">Save as...</button></div>
     <div id="output">
         <div id="errors"></div>
         <div id="suboutput">
