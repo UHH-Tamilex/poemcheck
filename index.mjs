@@ -18,13 +18,13 @@ const alignCheck = async () => {
     warnings.innerHTML = '';
 
     const inputs = document.querySelectorAll('textarea');
-    const tamval = Sanscript.t(inputs[1].value.replaceAll(/[\d∞]/g,'').trim(),'tamil','iast');
+    const tamval = Sanscript.t(inputs[1].value.replaceAll(/[\d∞\[\]]/g,'').trim(),'tamil','iast');
     const tamlines = tamval.replaceAll(/[,.;?!](?=\s|$)/g,'').split(/\n+/);
     const tam = tamlines.reduce((acc,cur) => acc.concat(cur.trim().split(/\s+/)),[]);
 
     const engval = inputs[2].value.trim();
     const eng = engval ? engval.split(/\s+/)
-                               .map(s => s.replaceAll(/[,.;?!]$/g,''))
+                               .map(s => s.replaceAll('∞','').replaceAll(/[,.;?!]$/g,''))
                                .filter(s => !s.match(/^\d+$/)) :
                          Array(tam.length).fill('');
     if(engval) {
@@ -43,7 +43,7 @@ const alignCheck = async () => {
     warnings.style.border = 'none';
 
     const iasted = Sanscript.t(inputs[0].value.trim(),'tamil','iast');
-    const text = iasted.replaceAll(/[\s\d]/g,'');
+    const text = iasted.replaceAll(/[\s\d\[\]]/g,'');
 
     const lookup = document.querySelector('input[name="lookup"]').checked;
 
@@ -67,7 +67,7 @@ const alignCheck = async () => {
     const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`,'text/xml');
     
     _state.standOff = `<standOff type="wordsplit">${ret.xml}</standOff>`;
-    _state.poem = formatPoem(iasted);
+    _state.poem = formatPoem(iasted,inputs);
 
     const xproc = new XSLTProcessor();
     const resp = await fetch('wordlist.xsl');
@@ -104,9 +104,14 @@ const refreshTranslation = (lines,wordlist) => {
     return ret;
 };
 
-const formatPoem = str => {
-    const lines = str.split(/\n/).map(l => `<l>${l}</l>`);
-    return `<text xml:lang="ta"><body><div><lg type="edition">${lines.join('')}</lg></div></body></text>`;
+const formatPoem = (str,inputs) => {
+    const lines = str.replaceAll('[','<supplied>')
+                     .replaceAll(']','</supplied>')
+                     .split(/\n/)
+                     .map(l => `<l>${l}</l>`);
+    const puttuvil = (inputs[1].contains('∞') || inputs[2].contains('∞')) ?
+        ' style="pūṭṭuvil"' : '';
+    return `<text xml:lang="ta"><body><div><lg type="edition"${puttuvil}>${lines.join('')}</lg></div></body></text>`;
 };
 
 const saveAs = async () => {
