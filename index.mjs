@@ -109,7 +109,7 @@ const formatPoem = (str,inputs) => {
                      .replaceAll(']','</supplied>')
                      .split(/\n/)
                      .map(l => `<l>${l}</l>`);
-    const puttuvil = (inputs[1].contains('∞') || inputs[2].contains('∞')) ?
+    const puttuvil = (inputs[1].value.includes('∞') || inputs[2].value.includes('∞')) ?
         ' style="pūṭṭuvil"' : '';
     return `<text xml:lang="ta"><body><div><lg type="edition"${puttuvil}>${lines.join('')}</lg></div></body></text>`;
 };
