@@ -24,12 +24,18 @@ const alignCheck = async () => {
 
     const engval = inputs[2].value.trim();
     const eng = engval ? engval.split(/\s+/)
-                               .map(s => s.replaceAll('∞','').replaceAll(/[,.;?!]$/g,''))
+                               .map(s => s.trim().replaceAll('∞','').replaceAll(/[,.;?!]$/g,''))
                                .filter(s => !s.match(/^\d+$/)) :
                          Array(tam.length).fill('');
     if(engval) {
         const englines = engval.split(/\n+/).map(s => s.replace(/\s+\d+$/,''));
         for(let n=0;n<tamlines.length;n++) {
+            if(!englines[n]) {
+                warnings.innerHTML = (`<div><b>Line ${n+1}</b>: Word split & word-by-word translation don't match.</div>`);
+                warnings.style.border = '1px dotted red';
+                warnings.style.padding = '1rem';
+                return;
+            }
             if(tamlines[n].trim().split(/\s+/).length !== englines[n].trim().split(/\s+/).length) {
                 
                 warnings.innerHTML = (`<div><b>Line ${n+1}</b>: Tamil & English don't match.</div>`);
