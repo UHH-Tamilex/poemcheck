@@ -28,7 +28,7 @@ const alignCheck = async () => {
                                .filter(s => !s.match(/^\d+$/)) :
                          Array(tam.length).fill('');
     if(engval) {
-        const englines = engval.split(/\n+/).map(s => s.replace(/\s+\d+$/,''));
+        const englines = engval.split(/\n+/).map(s => s.replace(/[\s\d]+$/,''));
         for(let n=0;n<tamlines.length;n++) {
             if(!englines[n]) {
                 warnings.innerHTML = (`<div><b>Line ${n+1}</b>: Word split & word-by-word translation don't match.</div>`);
