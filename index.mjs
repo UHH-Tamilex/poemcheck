@@ -117,11 +117,11 @@ const formatPoem = (str,inputs) => {
                      .map(l => `<l>${l}</l>`);
     const puttuvil = (inputs[1].value.includes('∞') || inputs[2].value.includes('∞')) ?
         ' style="pūṭṭuvil"' : '';
-    return `<text xml:lang="ta"><body><div><lg type="edition"${puttuvil}>${lines.join('')}</lg></div></body></text>`;
+    return `<text xml:lang="ta">\n  <body>\n    <div>\n      <lg type="edition"${puttuvil}>\n${lines.join('\n')}</lg>\n    </div>\n  </body>\n</text>`;
 };
 
 const saveAs = async () => {
-    const text = `<?xml version="1.0" encoding="UTF-8"?><TEI xmlns="http://www.tei-c.org/ns/1.0">${_state.poem}${_state.standOff}</TEI>`;
+    const text = `<?xml version="1.0" encoding="UTF-8"?>\n<TEI xmlns="http://www.tei-c.org/ns/1.0">\n${_state.poem}\n${_state.standOff}\n</TEI>`;
     const file = new Blob([text],{type: 'text/xml;charset=utf-8'});
     const fileHandle = await showSaveFilePicker({
         _preferPolyfill: false,
