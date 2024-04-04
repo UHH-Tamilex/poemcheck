@@ -5,7 +5,8 @@ import { showSaveFilePicker } from 'https://cdn.jsdelivr.net/npm/native-file-sys
 
 const _state = {
     standOff: null,
-    poem: null
+    poem: null,
+    taTaml: (new URLSearchParams(window.location.search)).get('script') === 'Taml'
 };
 
 const alignCheck = async () => {
@@ -79,7 +80,15 @@ const alignCheck = async () => {
     const resp = await fetch('wordlist.xsl');
     const xslsheet =  parser.parseFromString(await resp.text(),'text/xml');
     xproc.importStylesheet(xslsheet);
-    wordlist.append(xproc.transformToDocument(standOff).firstChild);
+    const res = xproc.transformToDocument(standOff).firstChild;
+    
+    if(_state.taTaml)
+        for(const th of res.querySelectorAll('[lang="ta-Latn"]')) {
+            th.textContent = Sanscript.t(th.textContent,'iast','tamil');
+            th.lang = 'ta-Taml';
+        }
+
+    wordlist.append(res);
     const tds = wordlist.querySelectorAll('td span');
     for(const td of [...tds].reverse()) {
         td.focus();

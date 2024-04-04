@@ -21,6 +21,7 @@
 <xsl:template match="x:entry">
     <xsl:element name="tr">
         <xsl:element name="th">
+            <xsl:attribute name="lang">ta-Latn</xsl:attribute>
             <xsl:choose>
                 <xsl:when test="x:form[@type='simple']">
                     <xsl:apply-templates select="x:form[@type='simple']"/>
@@ -40,6 +41,7 @@
             <xsl:apply-templates select="x:gramGrp[not(@type)]"/>
         </xsl:element>
         <xsl:element name="td">
+            <xsl:attribute name="lang">ta-Latn</xsl:attribute>
             <xsl:apply-templates select="x:gramGrp[@type='particle']"/>
         </xsl:element>
     </xsl:element>
