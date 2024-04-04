@@ -73,7 +73,7 @@ const alignCheck = async () => {
     const parser = new DOMParser();
     const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`,'text/xml');
     
-    _state.standOff = `<standOff type="wordsplit">${ret.xml}</standOff>`;
+    _state.standOff = `<standOff type="wordsplit" corresp="#poemXX">${ret.xml}</standOff>`;
     _state.poem = formatPoem(iasted,inputs);
 
     const xproc = new XSLTProcessor();
@@ -122,11 +122,12 @@ const refreshTranslation = (lines,wordlist) => {
 const formatPoem = (str,inputs) => {
     const lines = str.replaceAll('[','<supplied>')
                      .replaceAll(']','</supplied>')
+                     .replaceAll(/\d/g,'')
                      .split(/\n/)
-                     .map(l => `<l>${l}</l>`);
+                     .map(l => `<l>${l.trim()}</l>`);
     const puttuvil = (inputs[1].value.includes('∞') || inputs[2].value.includes('∞')) ?
         ' style="pūṭṭuvil"' : '';
-    return `<text xml:lang="ta">\n  <body>\n    <div>\n      <lg type="edition"${puttuvil}>\n${lines.join('\n')}</lg>\n    </div>\n  </body>\n</text>`;
+    return `<text xml:lang="ta">\n  <body>\n    <div xml:id="poemXX">\n      <lg type="edition"${puttuvil}>\n${lines.join('\n')}</lg>\n    </div>\n  </body>\n</text>`;
 };
 
 const saveAs = async () => {
