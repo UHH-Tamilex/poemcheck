@@ -18,6 +18,13 @@
 </xsl:template>
 
 <xsl:template match="x:interp"/>
+<xsl:template match="x:superEntry">
+    <xsl:apply-templates/>
+</xsl:template>
+<xsl:template match="x:superEntry/x:entry">
+    <xsl:apply-templates/>
+</xsl:template>
+
 <xsl:template match="x:entry">
     <xsl:element name="tr">
         <xsl:element name="th">
