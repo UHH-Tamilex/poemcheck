@@ -65,8 +65,7 @@ const alignCheck = async () => {
         warnings.style.border = '1px dotted red';
         warnings.style.padding = '1rem';
     }
-
-    makeAlignmentTable(ret.alignment,tamlines,output);
+    makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),output);
     
     if(lookup) inputs[2].value = refreshTranslation(tamlines,ret.wordlist);
 
