@@ -130,7 +130,33 @@ const formatPoem = (str,inputs) => {
 };
 
 const saveAs = async () => {
-    const text = `<?xml version="1.0" encoding="UTF-8"?>\n<TEI xmlns="http://www.tei-c.org/ns/1.0">\n${_state.poem}\n${_state.standOff}\n</TEI>`;
+    const text = 
+`<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+        <title>
+            <title xml:lang="ta"></title> XX.
+            <persName xml:lang="ta"></persName>
+        </title>     
+      </titleStmt>
+      <publicationStmt><p/></publicationStmt>
+      <sourceDesc>
+        <msDesc xml:lang="en">
+          <msIdentifier>
+          </msIdentifier>
+           <msContents>
+            <summary><p></p>
+            </summary>
+          </msContents>    
+        </msDesc>
+      </sourceDesc>
+    </fileDesc>
+    <revisionDesc><change/></revisionDesc>
+  </teiHeader>
+${_state.poem}
+${_state.standOff}
+</TEI>`;
     const file = new Blob([text],{type: 'text/xml;charset=utf-8'});
     const fileHandle = await showSaveFilePicker({
         _preferPolyfill: false,
