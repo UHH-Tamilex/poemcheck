@@ -126,12 +126,14 @@ const formatPoem = (str,inputs) => {
                      .map(l => `<l>${l.trim()}</l>`);
     const puttuvil = (inputs[1].value.includes('∞') || inputs[2].value.includes('∞')) ?
         ' style="pūṭṭuvil"' : '';
-    return `<text xml:lang="ta">\n  <body>\n    <div xml:id="poemXX">\n      <lg type="edition"${puttuvil}>\n${lines.join('\n')}</lg>\n    </div>\n  </body>\n</text>`;
+    return `<text xml:lang="ta">\n  <body>\n    <div xml:id="poemXX">\n      <lg type="edition"${puttuvil}>\n${lines.join('\n')}\n</lg>\n    </div>\n  </body>\n</text>`;
 };
 
 const saveAs = async () => {
     const text = 
-`<TEI xmlns="http://www.tei-c.org/ns/1.0">
+`<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="edition.xsl" ?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>
     <fileDesc>
       <titleStmt>
