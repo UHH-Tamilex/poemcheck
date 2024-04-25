@@ -76,7 +76,7 @@ const alignCheck = async () => {
     _state.poem = formatPoem(iasted,inputs);
 
     const xproc = new XSLTProcessor();
-    const resp = await fetch('wordlist.xsl');
+    const resp = await fetch('lib/debugging/wordlist.xsl');
     const xslsheet =  parser.parseFromString(await resp.text(),'text/xml');
     xproc.importStylesheet(xslsheet);
     const res = xproc.transformToDocument(standOff).firstChild;
