@@ -54,7 +54,7 @@ const alignCheck = async () => {
 
     const lookup = document.querySelector('input[name="lookup"]').checked;
 
-    const ret = await alignWordsplits(text,tam,eng,lookup);
+    const ret = await alignWordsplits(text,tam,eng,[],lookup);
     
     if(ret.warnings.length > 0) {
         for(const warning of ret.warnings) {
