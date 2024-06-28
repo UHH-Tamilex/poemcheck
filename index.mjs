@@ -10,6 +10,11 @@ const _state = {
 };
 
 const alignCheck = async () => {
+    const blackout = document.createElement('div');
+    blackout.id = 'blackout';
+    blackout.innerHTML = '<div class="spinner"></div>';
+    document.body.appendChild(blackout);
+    
     const output = document.getElementById('alignment');
     output.innerHTML = '';
     const wordlist = document.getElementById('wordlist');
@@ -94,6 +99,7 @@ const alignCheck = async () => {
         td.blur();
     }
     document.getElementById('savebutton').style.display = 'inline';
+    blackout.remove();
 };
 
 const refreshTranslation = (lines,wordlist) => {
