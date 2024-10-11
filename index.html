@@ -28,6 +28,11 @@ body {
     display: flex;
         
 }
+
+#preamble {
+    display: block;
+    margin: 1rem;
+}
 #output {
     flex-direction: column;
 }
@@ -151,6 +156,9 @@ td.typo {
     </style>
 </head>
 <body>
+    <div id="preamble">
+        <div><label>Text ID</label> <input type="text" id="poemid" placeholder="poemXX"></div>
+    </div>
     <div id="input">
         <div><label>Metrical text</label><textarea id="metrical"></textarea></div>
         <div><label>Word split</label><textarea id="wordsplit"></textarea></div>

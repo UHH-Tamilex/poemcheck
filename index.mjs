@@ -15,6 +15,8 @@ const alignCheck = async () => {
     blackout.innerHTML = '<div class="spinner"></div>';
     document.body.appendChild(blackout);
     
+    _state.poemid = document.getElementById('poemid').value || 'poemXX';
+
     const output = document.getElementById('alignment');
     output.innerHTML = '';
     const wordlist = document.getElementById('wordlist');
@@ -81,7 +83,7 @@ const alignCheck = async () => {
     const parser = new DOMParser();
     const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`,'text/xml');
     
-    _state.standOff = `<standOff type="wordsplit" corresp="#poemXX">${ret.xml}</standOff>`;
+    _state.standOff = `<standOff type="wordsplit" corresp="#${_state.poemid}">${ret.xml}</standOff>`;
     _state.poem = formatPoem(iasted,inputs);
 
     const xproc = new XSLTProcessor();
@@ -136,7 +138,7 @@ const formatPoem = (str,inputs) => {
                      .map(l => `<l>${l.trim()}</l>`);
     const puttuvil = (inputs[1].value.includes('∞') || inputs[2].value.includes('∞')) ?
         ' style="pūṭṭuvil"' : '';
-    return `<text xml:lang="ta">\n  <body>\n    <div xml:id="poemXX">\n      <lg type="edition"${puttuvil}>\n${lines.join('\n')}\n</lg>\n    </div>\n  </body>\n</text>`;
+    return `<text xml:lang="ta">\n  <body>\n    <div xml:id="${_state.poemid}">\n      <lg type="edition"${puttuvil}>\n${lines.join('\n')}\n</lg>\n    </div>\n  </body>\n</text>`;
 };
 
 const saveAs = async () => {
@@ -172,7 +174,7 @@ ${_state.standOff}
     const file = new Blob([text],{type: 'text/xml;charset=utf-8'});
     const fileHandle = await showSaveFilePicker({
         _preferPolyfill: false,
-        suggestedName: 'poem.xml',
+        suggestedName: `${_state.poemid}.xml`,
         types: [{description: 'TEI XML', accept: {'text/xml': ['.xml']} }]
     });
     const writer = await fileHandle.createWritable();
