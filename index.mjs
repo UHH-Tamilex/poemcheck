@@ -67,16 +67,7 @@ const alignCheck = async () => {
 
     const ret = await alignWordsplits(text,tam,eng,[],lookup);
     
-    if(ret.warnings.length > 0) {
-        for(const warning of ret.warnings) {
-            const ws = document.createElement('div');
-            ws.innerHTML = `<b>${ret.warnings}</b> not recognized.`;
-            warnings.append(ws);
-        }
-        warnings.style.border = '1px dotted red';
-        warnings.style.padding = '1rem';
-    }
-    makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),output);
+    makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),ret.warnings);
     
     if(lookup) inputs[2].value = refreshTranslation(tamlines,ret.wordlist);
 
