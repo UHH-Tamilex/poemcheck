@@ -67,8 +67,9 @@ const alignCheck = async () => {
 
     const ret = await alignWordsplits(text,tam,eng,[],lookup);
     
-    makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),ret.warnings);
-    
+    const tables = makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),ret.warnings);
+    warnings.append(...tables); 
+
     if(lookup) inputs[2].value = refreshTranslation(tamlines,ret.wordlist);
 
     const parser = new DOMParser();
