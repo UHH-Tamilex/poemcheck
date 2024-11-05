@@ -1,7 +1,7 @@
 import { alignWordsplits } from './lib/debugging/aligner.mjs';
 import { Sanscript } from './lib/js/sanscript.mjs';
 import makeAlignmentTable from './lib/debugging/alignmenttable.mjs';
-import { showSaveFilePicker } from 'https://cdn.jsdelivr.net/npm/native-file-system-adapter/mod.js';
+import { showSaveFilePicker } from './lib/js/native-file-system-adapter/es6.js';
 
 const _state = {
     standOff: null,
