@@ -6,6 +6,8 @@ import { showSaveFilePicker } from './lib/js/native-file-system-adapter/es6.js';
 const _state = {
     standOff: null,
     poem: null,
+    tamlines: null,
+    wordlist: null,
     taTaml: (new URLSearchParams(window.location.search)).get('script') === 'Taml'
 };
 
@@ -19,8 +21,8 @@ const alignCheck = async () => {
 
     const output = document.getElementById('alignment');
     output.innerHTML = '';
-    const wordlist = document.getElementById('wordlist');
-    wordlist.innerHTML = '';
+    const wordlistel = document.getElementById('wordlist');
+    wordlistel.innerHTML = '';
 
     const warnings = document.getElementById('errors');
     warnings.innerHTML = '';
@@ -30,6 +32,8 @@ const alignCheck = async () => {
     const tamlines = tamval.replaceAll(/[,.;?!](?=\s|$)/g,'')
                            .replaceAll(/u\*/g,'*')
                            .split(/\n+/);
+    _state.tamlines = tamlines;
+
     const tam = tamlines.reduce((acc,cur) => acc.concat(cur.trim().split(/\s+/)),[]);
 
     const engval = inputs[2].value.trim();
@@ -66,11 +70,13 @@ const alignCheck = async () => {
     const lookup = document.querySelector('input[name="lookup"]').checked;
 
     const ret = await alignWordsplits(text,tam,eng,[],lookup);
-    
+   
+    _state.wordlist = ret.wordlist;
+
     const tables = makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),ret.warnings);
     output.append(...tables); 
 
-    if(lookup) inputs[2].value = refreshTranslation(tamlines,ret.wordlist);
+    if(lookup) inputs[2].value = refreshTranslation(tamlines,_state.wordlist);
 
     const parser = new DOMParser();
     const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`,'text/xml');
@@ -90,13 +96,15 @@ const alignCheck = async () => {
             th.lang = 'ta-Taml';
         }
 
-    wordlist.append(res);
-    const tds = wordlist.querySelectorAll('td span');
+    wordlistel.append(res);
+    const tds = wordlistel.querySelectorAll('td span');
     for(const td of [...tds].reverse()) {
         td.focus();
         td.blur();
     }
     document.getElementById('savebutton').style.display = 'inline';
+    document.getElementById('savebutton').disabled = false;
+    document.getElementById('savebutton').title = '';
     blackout.remove();
 };
 
@@ -175,7 +183,17 @@ ${_state.standOff}
 
 };
 
+const refreshFromWordlist = e => {
+    document.getElementById('savebutton').disabled = true;
+    document.getElementById('savebutton').title = 'Realign first';
+    const row = e.target.closest('tr');
+    const index = [...row.parentNode.children].indexOf(row);
+    _state.wordlist[index].translation = e.target.textContent;
+    document.getElementById('engsplit').value = refreshTranslation(_state.tamlines,_state.wordlist);
+};
+
 window.addEventListener('load',() => {
     document.getElementById('alignbutton').addEventListener('click',alignCheck);
     document.getElementById('savebutton').addEventListener('click',saveAs);
+    document.getElementById('wordlist').addEventListener('input',refreshFromWordlist);
 });
