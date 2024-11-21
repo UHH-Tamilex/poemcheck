@@ -1,4 +1,5 @@
 import { alignWordsplits } from './lib/debugging/aligner.mjs';
+import Splitter from './lib/debugging/splits.mjs';
 import { Sanscript } from './lib/js/sanscript.mjs';
 import makeAlignmentTable from './lib/debugging/alignmenttable.mjs';
 import { showSaveFilePicker } from './lib/js/native-file-system-adapter/es6.js';
@@ -8,7 +9,8 @@ const _state = {
     poem: null,
     tamlines: null,
     wordlist: null,
-    taTaml: (new URLSearchParams(window.location.search)).get('script') === 'Taml'
+    taTaml: (new URLSearchParams(window.location.search)).get('script') === 'Taml',
+    editState: null
 };
 
 const alignCheck = async () => {
@@ -76,7 +78,7 @@ const alignCheck = async () => {
     const tables = makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),ret.warnings);
     output.append(...tables); 
 
-    if(lookup) inputs[2].value = refreshTranslation(tamlines,_state.wordlist);
+    if(lookup) inputs[2].value = Splitter.refreshTranslation(tamlines,_state.wordlist);
 
     const parser = new DOMParser();
     const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`,'text/xml');
@@ -102,32 +104,10 @@ const alignCheck = async () => {
         td.focus();
         td.blur();
     }
-    document.getElementById('savebutton').style.display = 'inline';
-    document.getElementById('savebutton').disabled = false;
-    document.getElementById('savebutton').title = '';
+    document.getElementById('saveasbutton').style.display = 'inline';
+    document.getElementById('saveasbutton').disabled = false;
+    document.getElementById('saveasbutton').title = '';
     blackout.remove();
-};
-
-const refreshTranslation = (lines,wordlist) => {
-    let ret = '';
-    const makeWord = (obj) => {
-        let trans = obj.translation;
-        if(obj.gram && obj.gram.length > 0)
-            trans = trans + '(' + obj.gram.join('|') + ')';
-        if(trans === '') trans = '()';
-        return trans;
-    };
-
-    let w = 0;
-    for(const line of lines) {
-        const wordsinline = line.trim().split(/\s+/).length;
-        for(let n=0;n<wordsinline;n++) {
-            ret = ret + makeWord(wordlist[w]) + ' ';
-            w = w + 1;
-        }
-        ret = ret + '\n';
-    }
-    return ret;
 };
 
 const formatPoem = (str,inputs) => {
@@ -183,17 +163,11 @@ ${_state.standOff}
 
 };
 
-const refreshFromWordlist = e => {
-    document.getElementById('savebutton').disabled = true;
-    document.getElementById('savebutton').title = 'Realign first';
-    const row = e.target.closest('tr');
-    const index = [...row.parentNode.children].indexOf(row);
-    _state.wordlist[index].translation = e.target.textContent;
-    document.getElementById('engsplit').value = refreshTranslation(_state.tamlines,_state.wordlist);
-};
-
 window.addEventListener('load',() => {
+    Splitter.listEdit.state = _state;
     document.getElementById('alignbutton').addEventListener('click',alignCheck);
-    document.getElementById('savebutton').addEventListener('click',saveAs);
-    document.getElementById('wordlist').addEventListener('input',refreshFromWordlist);
+    document.getElementById('saveasbutton').addEventListener('click',saveAs);
+    document.getElementById('wordlist').addEventListener('click',Splitter.listEdit.click);
+    document.getElementById('wordlist').addEventListener('keydown',Splitter.listEdit.keydown);
+    document.getElementById('wordlist').addEventListener('focusin',Splitter.listEdit.focusin);
 });
