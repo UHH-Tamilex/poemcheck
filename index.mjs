@@ -76,7 +76,8 @@ const alignCheck = async () => {
     _state.wordlist = ret.wordlist;
 
     const tables = makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),ret.warnings);
-    output.append(...tables); 
+    for(const table of tables)
+        output.appendChild(table); 
 
     if(lookup) inputs[2].value = Splitter.refreshTranslation(tamlines,_state.wordlist);
 
