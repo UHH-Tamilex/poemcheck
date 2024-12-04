@@ -14,11 +14,12 @@ const _state = {
 };
 
 const alignCheck = async () => {
+    /*
     const blackout = document.createElement('div');
     blackout.id = 'blackout';
     blackout.innerHTML = '<div class="spinner"></div>';
     document.body.appendChild(blackout);
-    
+    */
     _state.poemid = document.getElementById('poemid').value || 'poemXX';
 
     const output = document.getElementById('alignment');
@@ -27,7 +28,7 @@ const alignCheck = async () => {
     wordlistel.innerHTML = '';
 
     const warnings = document.getElementById('errors');
-    warnings.innerHTML = '';
+    warnings.innerHTML = '<div class="spinner"></div>';
 
     const inputs = document.querySelectorAll('textarea');
     const tamval = Sanscript.t(inputs[1].value.replaceAll(/[\d∞\[\]]/g,'').trim(),'tamil','iast');
@@ -74,6 +75,7 @@ const alignCheck = async () => {
     const ret = await alignWordsplits(text,tam,eng,[],lookup);
    
     _state.wordlist = ret.wordlist;
+    warnings.innerHTML = '';
 
     const tables = makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),ret.warnings);
     for(const table of tables)
@@ -99,6 +101,7 @@ const alignCheck = async () => {
             th.lang = 'ta-Taml';
         }
 
+    wordlistel.innerHTML = '';
     wordlistel.append(res);
     const tds = wordlistel.querySelectorAll('td span');
     for(const td of [...tds].reverse()) {
