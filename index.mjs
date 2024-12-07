@@ -31,32 +31,32 @@ const alignCheck = async () => {
     warnings.innerHTML = '<div class="spinner"></div>';
 
     const inputs = document.querySelectorAll('textarea');
-    const tamval = Sanscript.t(inputs[1].value.replaceAll(/[\d∞\[\]]/g,'').trim(),'tamil','iast');
-    const tamlines = tamval.replaceAll(/[,.;?!](?=\s|$)/g,'')
-                           .replaceAll(/u\*/g,'*')
-                           .split(/\n+/);
+    const tamval = Sanscript.t(inputs[1].value.replaceAll(/[\d∞\[\]]/g, '').trim(), 'tamil', 'iast');
+    const tamlines = tamval.replaceAll(/[,.;?!](?=\s|$)/g, '')
+        .replaceAll(/u\*/g, '*')
+        .split(/\n+/);
     _state.tamlines = tamlines;
 
-    const tam = tamlines.reduce((acc,cur) => acc.concat(cur.trim().split(/\s+/)),[]);
+    const tam = tamlines.reduce((acc, cur) => acc.concat(cur.trim().split(/\s+/)), []);
 
     const engval = inputs[2].value.trim();
     const eng = engval ? engval.split(/\s+/)
-                               .map(s => s.trim().replaceAll('∞','').replaceAll(/[,.;?!]$/g,''))
-                               .filter(s => !s.match(/^\d+$/)) :
-                         Array(tam.length).fill('');
-    if(engval) {
-        const englines = engval.split(/\n+/).map(s => s.replace(/[\s\d]+$/,''));
-        for(let n=0;n<tamlines.length;n++) {
-            if(!englines[n]) {
-                warnings.innerHTML = (`<div><b>Line ${n+1}</b>: Word split & word-by-word translation don't match.</div>`);
+        .map(s => s.trim().replaceAll('∞', '').replaceAll(/[,.;?!]$/g, ''))
+        .filter(s => !s.match(/^\d+$/)) :
+        Array(tam.length).fill('');
+    if (engval) {
+        const englines = engval.split(/\n+/).map(s => s.replace(/[\s\d]+$/, ''));
+        for (let n = 0; n < tamlines.length; n++) {
+            if (!englines[n]) {
+                warnings.innerHTML = (`<div><b>Line ${n + 1}</b>: Word split & word-by-word translation don't match.</div>`);
                 warnings.style.border = '1px dotted red';
                 warnings.style.padding = '1rem';
                 blackout.remove();
                 return;
             }
-            if(tamlines[n].trim().split(/\s+/).length !== englines[n].trim().split(/\s+/).length) {
-                
-                warnings.innerHTML = (`<div><b>Line ${n+1}</b>: Tamil & English don't match.</div>`);
+            if (tamlines[n].trim().split(/\s+/).length !== englines[n].trim().split(/\s+/).length) {
+
+                warnings.innerHTML = (`<div><b>Line ${n + 1}</b>: Tamil & English don't match.</div>`);
                 warnings.style.border = '1px dotted red';
                 warnings.style.padding = '1rem';
                 blackout.remove();
@@ -67,44 +67,44 @@ const alignCheck = async () => {
 
     warnings.style.border = 'none';
 
-    const iasted = Sanscript.t(inputs[0].value.trim(),'tamil','iast');
-    const text = iasted.replaceAll(/[\s\d\[\]]/g,'');
+    const iasted = Sanscript.t(inputs[0].value.trim(), 'tamil', 'iast');
+    const text = iasted.replaceAll(/[\s\d\[\]]/g, '');
 
     const lookup = document.querySelector('input[name="lookup"]').checked;
 
-    const ret = await alignWordsplits(text,tam,eng,[],lookup);
-   
+    const ret = await alignWordsplits(text, tam, eng, [], lookup);
+
     _state.wordlist = ret.wordlist;
     warnings.innerHTML = '';
 
-    const tables = makeAlignmentTable(ret.alignment,tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g,'')),ret.warnings);
-    for(const table of tables)
-        output.appendChild(table); 
+    const tables = makeAlignmentTable(ret.alignment, tamlines.map(l => l.replaceAll(/\/.+?(?=\s|$)/g, '')), ret.warnings);
+    for (const table of tables)
+        output.appendChild(table);
 
-    if(lookup) inputs[2].value = Splitter.refreshTranslation(tamlines,_state.wordlist);
+    if (lookup) inputs[2].value = Splitter.refreshTranslation(tamlines, _state.wordlist);
 
     const parser = new DOMParser();
-    const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`,'text/xml');
-    
+    const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`, 'text/xml');
+
     _state.standOff = `<standOff type="wordsplit" corresp="#${_state.poemid}">${ret.xml}</standOff>`;
-    _state.poem = formatPoem(iasted,inputs);
+    _state.poem = formatPoem(iasted, inputs);
 
     const xproc = new XSLTProcessor();
     const resp = await fetch('lib/debugging/wordlist.xsl');
-    const xslsheet =  parser.parseFromString(await resp.text(),'text/xml');
+    const xslsheet = parser.parseFromString(await resp.text(), 'text/xml');
     xproc.importStylesheet(xslsheet);
     const res = xproc.transformToDocument(standOff).firstChild;
-    
-    if(_state.taTaml)
-        for(const th of res.querySelectorAll('[lang="ta-Latn"]')) {
-            th.textContent = Sanscript.t(th.textContent,'iast','tamil');
+
+    if (_state.taTaml)
+        for (const th of res.querySelectorAll('[lang="ta-Latn"]')) {
+            th.textContent = Sanscript.t(th.textContent, 'iast', 'tamil');
             th.lang = 'ta-Taml';
         }
 
     wordlistel.innerHTML = '';
     wordlistel.append(res);
     const tds = wordlistel.querySelectorAll('td span');
-    for(const td of [...tds].reverse()) {
+    for (const td of [...tds].reverse()) {
         td.focus();
         td.blur();
     }
@@ -114,20 +114,20 @@ const alignCheck = async () => {
     blackout.remove();
 };
 
-const formatPoem = (str,inputs) => {
-    const lines = str.replaceAll('[','<supplied>')
-                     .replaceAll(']','</supplied>')
-                     .replaceAll(/\d/g,'')
-                     .split(/\n/)
-                     .map(l => `<l>${l.trim()}</l>`);
+const formatPoem = (str, inputs) => {
+    const lines = str.replaceAll('[', '<supplied>')
+        .replaceAll(']', '</supplied>')
+        .replaceAll(/\d/g, '')
+        .split(/\n/)
+        .map(l => `<l>${l.trim()}</l>`);
     const puttuvil = (inputs[1].value.includes('∞') || inputs[2].value.includes('∞')) ?
         ' style="pūṭṭuvil"' : '';
     return `<text xml:lang="ta" type="edition">\n  <body>\n    <div xml:id="${_state.poemid}">\n      <lg type="edition"${puttuvil}>\n${lines.join('\n')}\n</lg>\n    </div>\n  </body>\n</text>`;
 };
 
 const saveAs = async () => {
-    const text = 
-`<?xml version="1.0" encoding="UTF-8"?>
+    const text =
+        `<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="edition.xsl" ?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>
@@ -155,11 +155,11 @@ const saveAs = async () => {
 ${_state.poem}
 ${_state.standOff}
 </TEI>`;
-    const file = new Blob([text],{type: 'text/xml;charset=utf-8'});
+    const file = new Blob([text], { type: 'text/xml;charset=utf-8' });
     const fileHandle = await showSaveFilePicker({
         _preferPolyfill: false,
         suggestedName: `${_state.poemid}.xml`,
-        types: [{description: 'TEI XML', accept: {'text/xml': ['.xml']} }]
+        types: [{ description: 'TEI XML', accept: { 'text/xml': ['.xml'] } }]
     });
     const writer = await fileHandle.createWritable();
     writer.write(file);
@@ -167,11 +167,63 @@ ${_state.standOff}
 
 };
 
-window.addEventListener('load',() => {
+const updateLineNumbers = (id) => {
+    const textarea = document.getElementById(id);
+    const lineNumbers = document.getElementById(`${id}-lines`);
+
+    // Handle empty textarea
+    if (!textarea.value.trim()) {
+        lineNumbers.innerHTML = ""; // Clear line numbers when there’s no content
+        return;
+    }
+
+    const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight, 10);
+    const lineCount = Math.ceil(textarea.scrollHeight / lineHeight);
+    const contentLines = textarea.value.split("\n").length;
+    const totalLines = Math.max(contentLines, lineCount);
+
+    lineNumbers.innerHTML = Array.from({ length: totalLines }, (_, i) => i + 1).join("<br>");
+
+    // Dynamically adjust the padding
+    const lineNumbersWidth = lineNumbers.offsetWidth; 
+    textarea.style.paddingLeft = `${lineNumbersWidth + 20}px`; // Set padding to width + 20px so that the linenumbers dont overlap the text
+
+    lineNumbers.scrollTop = textarea.scrollTop;
+};
+
+// const syncScrollLineNumWithTextArea = (id) => {
+//     const textarea = document.getElementById(id);
+//     const lineNumbers = document.getElementById(`${id}-lines`);
+
+//     lineNumbers.scrollTop = textarea.scrollTop;
+// };
+
+window.addEventListener('load', () => {
     Splitter.listEdit.state = _state;
-    document.getElementById('alignbutton').addEventListener('click',alignCheck);
-    document.getElementById('saveasbutton').addEventListener('click',saveAs);
-    document.getElementById('wordlist').addEventListener('click',Splitter.listEdit.click);
-    document.getElementById('wordlist').addEventListener('keydown',Splitter.listEdit.keydown);
-    document.getElementById('wordlist').addEventListener('focusin',Splitter.listEdit.focusin);
+    document.getElementById('alignbutton').addEventListener('click', alignCheck);
+    document.getElementById('saveasbutton').addEventListener('click', saveAs);
+    document.getElementById('wordlist').addEventListener('click', Splitter.listEdit.click);
+    document.getElementById('wordlist').addEventListener('keydown', Splitter.listEdit.keydown);
+    document.getElementById('wordlist').addEventListener('focusin', Splitter.listEdit.focusin);
+
+    ["metrical", "wordsplit", "engsplit"].forEach(id => {
+        const textarea = document.getElementById(id);
+
+        textarea.addEventListener("input", () => {
+            updateLineNumbers(id);
+            // syncScrollLineNumWithTextArea(id);
+        });
+
+        // textarea.addEventListener("scroll", () => {
+        //     syncScroll(id); // Sync scroll when scrolling
+        // });
+
+        
+        updateLineNumbers(id);
+        // syncScrollLineNumWithTextArea(id);
+    });
+
+    window.addEventListener("resize", () => {
+        ["metrical", "wordsplit", "engsplit"].forEach(updateLineNumbers);
+    });
 });

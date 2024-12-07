@@ -1,4 +1,6 @@
+<!DOCTYPE html>
 <html>
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
@@ -15,159 +17,209 @@
     <script src="./lib/debugging/prism.js" data-manual=""></script>
     <script type="module" src="index.mjs"></script>
     <style type="text/css">
-body {
-    position: relative;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-}
-#input, #output {
-    width: 100vw;
-    left: 0;
-    top: 0;
-    display: flex;
-        
-}
+        body {
+            position: relative;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+        }
 
-#preamble {
-    display: block;
-    margin: 1rem;
-}
-#output {
-    flex-direction: column;
-}
+        #input,
+        #output {
+            width: 100vw;
+            left: 0;
+            top: 0;
+            display: flex;
+        }
 
-#errors {
-    margin-left: 1rem;
-    width: fit-content;
-}
-#suboutput {
-    /*width: 100vw;*/
-    display: flex;
-    flex-direction: row;
-    /*justify-content: space-around;*/
-    padding: 1rem;
-}
-#suboutput > div {
-    position: relative;
-    width: fit-content;
-}
-#align {
-    width: 100vw;
-    text-align: center;
-}
-#input {
-    margin-top: 1rem;
-    flex-direction: row;
-}
+        #preamble {
+            display: block;
+            margin: 1rem;
+        }
 
-#input > div {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    margin-right: 1rem;
-    margin-left: 1rem;
-}
+        #output {
+            flex-direction: column;
+        }
 
-textarea {
-    height: 50vh;
-    min-height: 200px;
-}
+        #errors {
+            margin-left: 1rem;
+            width: fit-content;
+        }
 
-table {
-    width: min-content;
-    border-collapse: collapse;
-    margin-bottom: 0.5rem;
-}
+        #suboutput {
+            display: flex;
+            flex-direction: row;
+            padding: 1rem;
+        }
 
-th {
-    font-size: 1.2rem;
-}
-td {
-    text-align: center;
-    font-size: 1.2rem;
-    line-height: 100%;
-    text-wrap: nowrap;
-    word-break: keep-all;
-    white-space: nowrap;
-}
-td.mismatch {
-    background: rgb(200,200,200);
-}
-td.typo {
-    background: #FF3535;
-}
+        #suboutput>div {
+            position: relative;
+            width: fit-content;
+        }
 
-#alignment {
-    white-space: pre;
-    margin-right: 5rem;
-}
+        #align {
+            width: 100vw;
+            text-align: center;
+        }
 
-#wordlist tr:nth-of-type(odd) {
-    background: rgba(0,0,0,0.2);
-}
-#wordlist td {
-    vertical-align: baseline;
-}
+        #input {
+            margin-top: 1rem;
+            flex-direction: row;
+        }
 
-#saveasbutton {
-    display: none;
-}
-#blackout {
-    position: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(50,50,50,0.5);
-    z-index: 10;
-}
+        #input>div {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            margin-right: 1rem;
+            margin-left: 1rem;
+        }
 
-.spinner {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  display: inline-block;
-  margin: 1rem;
-  position: relative;
-  background: linear-gradient(0deg, rgb(240,202,121) 0%, rgba(50,50,50,0.3) 60%);
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-}
-.spinner::after {
-  content: '';  
-  box-sizing: border-box;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 95px;
-  height: 95px;
-  border-radius: 90%;
-  background: #989895;
-}
-@keyframes rotation {
-  0% { transform: rotate(0deg) }
-  100% { transform: rotate(360deg)}
-} 
+        .textarea-wrapper {
+            display: flex;
+            position: relative;
+            border: 1px solid #ccc;
+            height: 50vh;
+            /* height: auto; */
+            overflow: hidden;
+        }
+
+        .line-numbers {
+            font-family: monospace;
+            background-color: #f0f0f0;
+            border-right: 1px solid #ccc;
+            color: #888;
+            text-align: right;
+            padding: 5px;
+            user-select: none;
+            white-space: nowrap;
+            overflow: hidden;
+            line-height: 1.5rem;
+            width: auto;
+            height: 100%;
+            padding-right: 10px;
+            padding-left: 10px;
+            position: absolute;
+        }
+
+        textarea {
+            font-family: monospace;
+            padding: 5px;
+            padding-left: 120px;
+            border: none;
+            flex-grow: 1;
+            resize: none;
+            line-height: 1.5rem;
+            height: 100%;
+            overflow: auto;
+            box-sizing: border-box;
+        }
+
+        .textarea-wrapper .line-numbers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: auto;
+            height: 100%;
+        }
+
+        .textarea-wrapper textarea {
+            padding-left: 50px;
+            margin-left: -10px;
+            overflow: auto;
+        }
+
+        #alignment {
+            white-space: pre;
+            margin-right: 5rem;
+        }
+
+        #wordlist tr:nth-of-type(odd) {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        #wordlist td {
+            vertical-align: baseline;
+        }
+
+        #saveasbutton {
+            display: none;
+        }
+
+        #blackout {
+            position: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(50, 50, 50, 0.5);
+            z-index: 10;
+        }
+
+        .spinner {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 1rem;
+            position: relative;
+            background: linear-gradient(0deg, rgb(240, 202, 121) 0%, rgba(50, 50, 50, 0.3) 60%);
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        .spinner::after {
+            content: '';
+            box-sizing: border-box;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 95px;
+            height: 95px;
+            border-radius: 90%;
+            background: #989895;
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
     </style>
 </head>
+
 <body>
     <div id="preamble">
         <div><label>Text ID</label> <input type="text" id="poemid" placeholder="poemXX"></div>
     </div>
     <div id="input">
-        <div><label>Metrical text</label><textarea id="metrical"></textarea></div>
-        <div><label>Word split</label><textarea id="wordsplit"></textarea></div>
+        <div>
+            <label>Metrical text</label>
+            <div class="textarea-wrapper">
+                <div class="line-numbers" id="metrical-lines"></div>
+                <textarea id="metrical"></textarea>
+            </div>
+        </div>
+        <div>
+            <label>Word split</label>
+            <div class="textarea-wrapper">
+                <div class="line-numbers" id="wordsplit-lines"></div>
+                <textarea id="wordsplit"></textarea>
+            </div>
+        </div>
         <div>
             <label>Word-by-word translation</label>
-            <textarea id="engsplit"></textarea>
-            <div>
-                <input name="lookup" type="checkbox">
-                <label for="lookup">Grammar lookup</label>
+            <div class="textarea-wrapper">
+                <div class="line-numbers" id="engsplit-lines"></div>
+                <textarea id="engsplit"></textarea>
             </div>
         </div>
     </div>
@@ -175,9 +227,33 @@ td.typo {
     <div id="output">
         <div id="errors"></div>
         <div id="suboutput">
-        <div id="alignment"></div>
-        <div id="wordlist"></div>
+            <div id="alignment"></div>
+            <div id="wordlist"></div>
         </div>
     </div>
+    <!-- <script>
+        const updateLineNumbers = (id) => {
+            const textarea = document.getElementById(id);
+            const lineNumbers = document.getElementById(`${id}-lines`);
+            const lineCount = textarea.value.split("\n").length;
+            lineNumbers.innerHTML = Array.from({ length: lineCount }, (_, i) => i + 1).join("<br>");
+        };
+
+        const syncScroll = (id) => {
+            const textarea = document.getElementById(id);
+            const lineNumbers = document.getElementById(`${id}-lines`);
+            lineNumbers.scrollTop = textarea.scrollTop;
+        };
+
+        window.addEventListener("load", () => {
+            ["metrical", "wordsplit", "engsplit"].forEach(id => {
+                const textarea = document.getElementById(id);
+                textarea.addEventListener("input", () => updateLineNumbers(id));
+                textarea.addEventListener("scroll", () => syncScroll(id));
+                updateLineNumbers(id); // Initialize on load
+            });
+        });
+    </script> -->
 </body>
 
+</html>
