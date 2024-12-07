@@ -231,29 +231,6 @@
             <div id="wordlist"></div>
         </div>
     </div>
-    <!-- <script>
-        const updateLineNumbers = (id) => {
-            const textarea = document.getElementById(id);
-            const lineNumbers = document.getElementById(`${id}-lines`);
-            const lineCount = textarea.value.split("\n").length;
-            lineNumbers.innerHTML = Array.from({ length: lineCount }, (_, i) => i + 1).join("<br>");
-        };
-
-        const syncScroll = (id) => {
-            const textarea = document.getElementById(id);
-            const lineNumbers = document.getElementById(`${id}-lines`);
-            lineNumbers.scrollTop = textarea.scrollTop;
-        };
-
-        window.addEventListener("load", () => {
-            ["metrical", "wordsplit", "engsplit"].forEach(id => {
-                const textarea = document.getElementById(id);
-                textarea.addEventListener("input", () => updateLineNumbers(id));
-                textarea.addEventListener("scroll", () => syncScroll(id));
-                updateLineNumbers(id); // Initialize on load
-            });
-        });
-    </script> -->
 </body>
 
 </html>
