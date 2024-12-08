@@ -167,36 +167,66 @@ ${_state.standOff}
 
 };
 
+
 const updateLineNumbers = (id) => {
     const textarea = document.getElementById(id);
     const lineNumbers = document.getElementById(`${id}-lines`);
 
-    // Handle empty textarea
-    if (!textarea.value.trim()) {
-        lineNumbers.innerHTML = ""; // Clear line numbers when there’s no content
-        return;
-    }
+    lineNumbers.innerHTML = "";
 
     const lineHeight = parseInt(window.getComputedStyle(textarea).lineHeight, 10);
-    const lineCount = Math.ceil(textarea.scrollHeight / lineHeight);
-    const contentLines = textarea.value.split("\n").length;
-    const totalLines = Math.max(contentLines, lineCount);
+    
+    const hiddenDiv = document.createElement("div");
+    hiddenDiv.style.position = "absolute";
+    hiddenDiv.style.visibility = "hidden";
+    hiddenDiv.style.whiteSpace = "pre-wrap";
+    hiddenDiv.style.overflowWrap = "break-word";
+    hiddenDiv.style.width = `${textarea.offsetWidth}px`;
+    hiddenDiv.style.font = window.getComputedStyle(textarea).font;
+    hiddenDiv.style.lineHeight = `${lineHeight}px`;
+    document.body.appendChild(hiddenDiv);
 
-    lineNumbers.innerHTML = Array.from({ length: totalLines }, (_, i) => i + 1).join("<br>");
+    const lines = textarea.value.split("\n");
+    let lineNumber = 1;
+    
+    console.clear();
+    
+    console.log("Total lines: ", lines.length);
+    console.log("Lines: ", lines);
 
-    // Dynamically adjust the padding
-    const lineNumbersWidth = lineNumbers.offsetWidth; 
-    textarea.style.paddingLeft = `${lineNumbersWidth + 20}px`; // Set padding to width + 20px so that the linenumbers dont overlap the text
+
+    for (const line of lines) {
+        // Set the line's text in the hidden div to measure height
+        hiddenDiv.textContent = line || " "; // Handle empty lines
+        const visualLines = Math.ceil(hiddenDiv.offsetHeight / lineHeight);
+
+        // Add a line number for each visual line
+        for (let i = 0; i < visualLines; i++) {
+            const lineNumDiv = document.createElement("div");
+            lineNumDiv.textContent = lineNumber;
+            lineNumbers.appendChild(lineNumDiv);
+        }
+        lineNumber++;
+    }
+
+    document.body.removeChild(hiddenDiv);
+
+    const lineNumbersWidth = lineNumbers.offsetWidth;
+    textarea.style.paddingLeft = `${lineNumbersWidth + 20}px`;
 
     lineNumbers.scrollTop = textarea.scrollTop;
 };
 
-// const syncScrollLineNumWithTextArea = (id) => {
-//     const textarea = document.getElementById(id);
-//     const lineNumbers = document.getElementById(`${id}-lines`);
 
-//     lineNumbers.scrollTop = textarea.scrollTop;
-// };
+// Add scroll synchronization
+const syncScroll = (id) => {
+    const textarea = document.getElementById(id);
+    const lineNumbers = document.getElementById(`${id}-lines`);
+
+    textarea.addEventListener("scroll", () => {
+        lineNumbers.scrollTop = textarea.scrollTop;
+    });
+};
 
 window.addEventListener('load', () => {
     Splitter.listEdit.state = _state;
@@ -211,19 +241,20 @@ window.addEventListener('load', () => {
 
         textarea.addEventListener("input", () => {
             updateLineNumbers(id);
-            // syncScrollLineNumWithTextArea(id);
+            syncScroll(id); // Sync scroll when typing
         });
 
         // textarea.addEventListener("scroll", () => {
         //     syncScroll(id); // Sync scroll when scrolling
         // });
 
-        
-        updateLineNumbers(id);
-        // syncScrollLineNumWithTextArea(id);
-    });
 
-    window.addEventListener("resize", () => {
-        ["metrical", "wordsplit", "engsplit"].forEach(updateLineNumbers);
+        updateLineNumbers(id);
+        syncScroll(id);
     });
 });
+
+window.addEventListener("resize", () => {
+    ["metrical", "wordsplit", "engsplit"].forEach(updateLineNumbers);
+});
+
