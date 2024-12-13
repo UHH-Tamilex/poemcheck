@@ -31,7 +31,7 @@ const alignCheck = async () => {
     warnings.innerHTML = '<div class="spinner"></div>';
 
     const inputs = document.querySelectorAll('textarea');
-    const tamval = Sanscript.t(inputs[1].value.replaceAll(/[\d∞\[\]]/g,'').trim(),'tamil','iast');
+    const tamval = Sanscript.t(inputs[1].value.replaceAll(/[\d∞]/g,'').trim(),'tamil','iast');
     const tamlines = tamval.replaceAll(/[,.;?!](?=\s|$)/g,'')
                            .replaceAll(/u\*/g,'*')
                            .split(/\n+/);
