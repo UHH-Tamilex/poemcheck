@@ -51,7 +51,7 @@ const alignCheck = async () => {
                 warnings.innerHTML = (`<div><b>Line ${n+1}</b>: Word split & word-by-word translation don't match.</div>`);
                 warnings.style.border = '1px dotted red';
                 warnings.style.padding = '1rem';
-                blackout.remove();
+                //blackout.remove();
                 return;
             }
             if(tamlines[n].trim().split(/\s+/).length !== englines[n].trim().split(/\s+/).length) {
@@ -59,7 +59,7 @@ const alignCheck = async () => {
                 warnings.innerHTML = (`<div><b>Line ${n+1}</b>: Tamil & English don't match.</div>`);
                 warnings.style.border = '1px dotted red';
                 warnings.style.padding = '1rem';
-                blackout.remove();
+                //blackout.remove();
                 return;
             }
         }
@@ -111,7 +111,7 @@ const alignCheck = async () => {
     document.getElementById('saveasbutton').style.display = 'inline';
     document.getElementById('saveasbutton').disabled = false;
     document.getElementById('saveasbutton').title = '';
-    blackout.remove();
+    //blackout.remove();
 };
 
 const formatPoem = (str,inputs) => {
