@@ -122,12 +122,13 @@ const formatPoem = (str,inputs) => {
                      .map(l => `<l>${l.trim()}</l>`);
     const puttuvil = (inputs[1].value.includes('∞') || inputs[2].value.includes('∞')) ?
         ' style="pūṭṭuvil"' : '';
-    return `<text xml:lang="ta" type="edition">\n  <body>\n    <div xml:id="${_state.poemid}">\n      <lg type="edition"${puttuvil}>\n${lines.join('\n')}\n</lg>\n    </div>\n  </body>\n</text>`;
+    return `<text xml:lang="ta" type="edition">\n  <body>\n    <div rend="parallel">\n      <lg xml:id="${_state.poemid}"${puttuvil}>\n${lines.join('\n')}\n      </lg>\n      <lg xml:lang="en">\n<!--put your translation here-->\n      </lg>\n    </div>\n  </body>\n</text>`;
 };
 
 const saveAs = async () => {
     const text = 
 `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" schematypens="http://relaxng.org/ns/structure/1.0" type="application/xml"?>
 <?xml-stylesheet type="text/xsl" href="edition.xsl" ?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>
