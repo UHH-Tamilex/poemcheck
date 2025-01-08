@@ -111,7 +111,12 @@ const alignCheck = async () => {
     document.getElementById('saveasbutton').style.display = 'inline';
     document.getElementById('saveasbutton').disabled = false;
     document.getElementById('saveasbutton').title = '';
-    //blackout.remove();
+   //blackout.remove();
+};
+
+const disableSave = () => {
+    document.getElementById('saveasbutton').disabled = true;
+    document.getElementById('saveasbutton').title = 'Please realign first.';
 };
 
 const formatPoem = (str,inputs) => {
@@ -175,4 +180,8 @@ window.addEventListener('load',() => {
     document.getElementById('wordlist').addEventListener('click',Splitter.listEdit.click);
     document.getElementById('wordlist').addEventListener('keydown',Splitter.listEdit.keydown);
     document.getElementById('wordlist').addEventListener('focusin',Splitter.listEdit.focusin);
+    for(const box of document.querySelectorAll('input, textarea')) {
+        box.addEventListener('keyup',disableSave);
+        box.addEventListener('change',disableSave);
+    }
 });
