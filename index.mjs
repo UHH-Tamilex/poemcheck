@@ -2,7 +2,7 @@ import { alignWordsplits } from './lib/debugging/aligner.mjs';
 import Splitter from './lib/debugging/splits.mjs';
 import { Sanscript } from './lib/js/sanscript.mjs';
 import makeAlignmentTable from './lib/debugging/alignmenttable.mjs';
-import { showSaveFilePicker } from './lib/js/native-file-system-adapter/es6.js';
+import { saveAs } from './lib/debugging/utils.mjs';
 
 const _state = {
     standOff: null,
@@ -130,7 +130,7 @@ const formatPoem = (str,inputs) => {
     return `<text xml:lang="ta" type="edition">\n  <body>\n    <div rend="parallel">\n      <lg xml:id="${_state.poemid}"${puttuvil}>\n${lines.join('\n')}\n      </lg>\n      <lg xml:lang="en">\n<!--put your translation here-->\n      </lg>\n    </div>\n  </body>\n</text>`;
 };
 
-const saveAs = async () => {
+const saveThis = () => {
     const text = 
 `<?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="https://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" schematypens="http://relaxng.org/ns/structure/1.0" type="application/xml"?>
@@ -161,22 +161,13 @@ const saveAs = async () => {
 ${_state.poem}
 ${_state.standOff}
 </TEI>`;
-    const file = new Blob([text],{type: 'text/xml;charset=utf-8'});
-    const fileHandle = await showSaveFilePicker({
-        _preferPolyfill: false,
-        suggestedName: `${_state.poemid}.xml`,
-        types: [{description: 'TEI XML', accept: {'text/xml': ['.xml']} }]
-    });
-    const writer = await fileHandle.createWritable();
-    writer.write(file);
-    writer.close();
-
+    saveAs(`${_state.poemid}.xml`,text);
 };
 
 window.addEventListener('load',() => {
     Splitter.listEdit.state = _state;
     document.getElementById('alignbutton').addEventListener('click',alignCheck);
-    document.getElementById('saveasbutton').addEventListener('click',saveAs);
+    document.getElementById('saveasbutton').addEventListener('click',saveThis);
     document.getElementById('wordlist').addEventListener('click',Splitter.listEdit.click);
     document.getElementById('wordlist').addEventListener('keydown',Splitter.listEdit.keydown);
     document.getElementById('wordlist').addEventListener('focusin',Splitter.listEdit.focusin);
