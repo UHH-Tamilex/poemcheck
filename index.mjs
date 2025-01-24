@@ -2,7 +2,7 @@ import { alignWordsplits } from './lib/debugging/aligner.mjs';
 import Splitter from './lib/debugging/splits.mjs';
 import { Sanscript } from './lib/js/sanscript.mjs';
 import makeAlignmentTable from './lib/debugging/alignmenttable.mjs';
-import { saveAs } from './lib/debugging/utils.mjs';
+import { saveAs } from './lib/debugging/fileops.mjs';
 
 const _state = {
     standOff: null,

@@ -73,6 +73,8 @@ body {
 textarea {
     height: 50vh;
     min-height: 200px;
+    font-family: inherit;
+    font-size: 1.2rem;
 }
 
 table {
@@ -164,14 +166,14 @@ td.typo {
         <div><label>Text ID</label> <input type="text" id="poemid" placeholder="poemXX"></div>
     </div>
     <div id="input">
-        <div><label>Metrical text</label><textarea id="metrical"></textarea></div>
-        <div><label>Word split</label><textarea id="wordsplit"></textarea></div>
+        <div><label>Metrical text</label><textarea id="metrical" spellcheck="false"></textarea></div>
+        <div><label>Word split</label><textarea id="wordsplit" spellcheck="false"></textarea></div>
         <div>
             <label>Word-by-word translation</label>
-            <textarea id="engsplit"></textarea>
+            <textarea id="engsplit" spellcheck="false"></textarea>
             <div>
-                <input name="lookup" type="checkbox">
-                <label for="lookup">Grammar lookup</label>
+                <input name="lookup" id="lookup_checkbox" type="checkbox">
+                <label for="lookup_checkbox">Grammar lookup</label>
             </div>
         </div>
     </div>
