@@ -21,6 +21,9 @@ const alignCheck = async () => {
     document.body.appendChild(blackout);
     */
     _state.poemid = document.getElementById('poemid').value || 'poemXX';
+    _state.poemtitle = document.getElementById('poemtitle').value || '';
+    _state.poemnum = document.getElementById('poemnum').value || '';
+    _state.poet = document.getElementById('poet').value || '';
 
     const output = document.getElementById('alignment');
     output.innerHTML = '';
@@ -140,8 +143,8 @@ const saveThis = () => {
     <fileDesc>
       <titleStmt>
         <title>
-            <title xml:lang="ta"></title> XX.
-            <persName xml:lang="ta"></persName>
+            <title xml:lang="ta">${_state.poemtitle}</title> <num>${_state.poemnum}</num>.
+            <persName xml:lang="ta">${_state.poet}</persName>
         </title>     
       </titleStmt>
       <publicationStmt><p/></publicationStmt>

@@ -31,7 +31,9 @@ body {
 }
 
 #preamble {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
     margin: 1rem;
 }
 #output {
@@ -164,6 +166,9 @@ td.typo {
 <body>
     <div id="preamble">
         <div><label>Text ID</label> <input type="text" id="poemid" placeholder="poemXX"></div>
+        <div><label>Title</label> <input type="text" id="poemtitle" placeholder="Kalittokai"></div>
+        <div><label>Number</label> <input type="text" id="poemnum" placeholder="100"></div>
+        <div><label>Poet</label> <input type="text" id="poet" placeholder=""></div>
     </div>
     <div id="input">
         <div><label>Metrical text</label><textarea id="metrical" spellcheck="false"></textarea></div>
