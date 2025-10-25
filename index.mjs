@@ -1,10 +1,16 @@
 import { alignWordsplits } from './lib/debugging/aligner.mjs';
 import Splitter from './lib/debugging/splits.mjs';
-import { Sanscript } from './lib/js/sanscript.mjs';
+import Sanscript from './lib/js/sanscript.mjs';
 import makeAlignmentTable from './lib/debugging/alignmenttable.mjs';
 import { saveAs } from './lib/debugging/fileops.mjs';
+import { init as cmWrapper} from './lib/debugging/cmwrapper.mjs';
 
 const _state = {
+    cms: {
+      metrical: null,
+      tamsplit: null,
+      engsplit: null
+    },
     standOff: null,
     poem: null,
     tamlines: null,
@@ -20,6 +26,9 @@ const alignCheck = async () => {
     blackout.innerHTML = '<div class="spinner"></div>';
     document.body.appendChild(blackout);
     */
+    for (const cms of [_state.cms.metrical, _state.cms.tamsplit, _state.cms.engsplit])
+      cms.save();
+
     _state.poemid = document.getElementById('poemid').value || 'poemXX';
     _state.poemtitle = document.getElementById('poemtitle').value || '';
     _state.poemnum = document.getElementById('poemnum').value || '';
@@ -33,7 +42,7 @@ const alignCheck = async () => {
     const warnings = document.getElementById('errors');
     warnings.innerHTML = '<div class="spinner"></div>';
 
-    const inputs = document.querySelectorAll('textarea');
+    const inputs = document.querySelectorAll('#metrical, #wordsplit, #engsplit');
     const tamval = Sanscript.t(inputs[1].value.replaceAll(/[\d∞]/g,'').trim(),'tamil','iast');
     const tamlines = tamval.replaceAll(/[,.;?!](?=\s|$)/g,'')
                            .replaceAll(/u\*/g,'*')
@@ -84,7 +93,7 @@ const alignCheck = async () => {
     for(const table of tables)
         output.appendChild(table); 
 
-    if(lookup) inputs[2].value = Splitter.refreshTranslation(tamlines,_state.wordlist);
+    if(lookup) _state.cms.engsplit.setValue(Splitter.refreshTranslation(tamlines,_state.wordlist));
 
     const parser = new DOMParser();
     const standOff = parser.parseFromString(`<standOff xmlns="http://www.tei-c.org/ns/1.0" type="wordsplit">\n${ret.xml}\n</standOff>`,'text/xml');
@@ -167,6 +176,60 @@ ${_state.standOff}
     saveAs(`${_state.poemid}.xml`,text);
 };
 
+const startCMs = () => {
+  _state.cms.metrical = cmWrapper(document.getElementById('metrical'));
+  _state.cms.metrical.setSize('100%','100%');
+  _state.cms.metrical.on('change',disableSave);
+  _state.cms.tamsplit = cmWrapper(document.getElementById('wordsplit'));
+  _state.cms.tamsplit.setSize('100%','100%');
+  _state.cms.tamsplit.on('change',disableSave);
+  _state.cms.engsplit = cmWrapper(document.getElementById('engsplit'));
+  _state.cms.engsplit.setSize('100%','100%');
+  _state.cms.engsplit.on('change',disableSave);
+  _state.cursor = {line: null, ch: null}; 
+  _state.cms.engsplit.on('cursorActivity', matchCursor);
+  _state.cms.tamsplit.on('cursorActivity', matchCursor);
+  _state.cms.metrical.on('cursorActivity', matchCursor);
+};
+
+const matchCursor = thiscm => {
+  if(thiscm.somethingSelected()) return;
+
+  const othercms = [_state.cms.metrical, _state.cms.tamsplit, _state.cms.engsplit].filter(c => c !== thiscm);
+
+  const cursor = thiscm.getCursor();
+  const contents = thiscm.getLine(cursor.line);
+  const wordnum = (contents.slice(0,cursor.ch).match(/\s+/g)||[]).length;
+  if(_state.cursor.line === cursor.line && _state.cursor.word == wordnum)
+    return;
+  
+  _state.cursor = {line: cursor.line, word: wordnum};
+  
+  for(const thatcm of othercms) {
+    const thatcontents = thatcm.getLine(cursor.line);
+    if(!thatcontents) continue;
+
+    if(thatcm === _state.cms.metrical || thiscm === _state.cms.metrical) {
+      thatcm.setSelection({line: cursor.line, ch: 0}, {line: cursor.line, ch: thatcontents.length});
+      continue;
+    }
+
+    const thatspaces = thatcontents.matchAll(/\s+|$/g);
+    let n = 0;
+    let startindex = 0;
+    for(const match of thatspaces) {
+      if(n === wordnum) {
+        const start = startindex === 0 ? 0 : startindex + 1;
+        thatcm.setSelection({line: cursor.line, ch: start}, {line:cursor.line, ch: match.index});
+        break;
+      }
+      if(n === wordnum-1)
+        startindex = match.index;
+      n = n + 1;
+    }
+  }
+};
+
 window.addEventListener('load',() => {
     Splitter.listEdit.state = _state;
     document.getElementById('alignbutton').addEventListener('click',alignCheck);
@@ -174,8 +237,9 @@ window.addEventListener('load',() => {
     document.getElementById('wordlist').addEventListener('click',Splitter.listEdit.click);
     document.getElementById('wordlist').addEventListener('keydown',Splitter.listEdit.keydown);
     document.getElementById('wordlist').addEventListener('focusin',Splitter.listEdit.focusin);
-    for(const box of document.querySelectorAll('input, textarea')) {
+    for(const box of document.querySelectorAll('input')) {
         box.addEventListener('keyup',disableSave);
         box.addEventListener('change',disableSave);
     }
+    startCMs();
 });

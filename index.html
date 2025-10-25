@@ -1,7 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Alignment checker</title>
     <link rel="stylesheet" href="./lib/css/tufte.css">
@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="./lib/css/edition.css">
     <link rel="stylesheet" href="./lib/debugging/prism.css">
     <link rel="stylesheet" href="./lib/debugging/debugging.css">
+    <link rel="stylesheet" href="./lib/debugging/codemirror.css">
     <script src="./lib/debugging/prism.js" data-manual=""></script>
     <script type="module" src="index.mjs"></script>
     <style type="text/css">
@@ -26,8 +27,14 @@ body {
     width: 100vw;
     left: 0;
     top: 0;
-    display: flex;
+    height: 100%;
+    min-height: 50%;
         
+}
+
+#output {
+    display: flex;
+
 }
 
 #preamble {
@@ -61,7 +68,8 @@ body {
 }
 #input {
     margin-top: 1rem;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 #input > div {
@@ -171,24 +179,27 @@ td.typo {
         <div><label>Poet</label> <input type="text" id="poet" placeholder=""></div>
     </div>
     <div id="input">
-        <div><label>Metrical text</label><textarea id="metrical" spellcheck="false"></textarea></div>
-        <div><label>Word split</label><textarea id="wordsplit" spellcheck="false"></textarea></div>
+        <div><label>Metrical text</label><textarea id="metrical" data-mode="wordsplit" spellcheck="false"></textarea></div>
+        <div><label>Word split</label><textarea id="wordsplit" data-mode="wordsplit" spellcheck="false"></textarea></div>
         <div>
             <label>Word-by-word translation</label>
-            <textarea id="engsplit" spellcheck="false"></textarea>
+            <textarea id="engsplit" data-mode="glossing" spellcheck="false"></textarea>
             <div>
                 <input name="lookup" id="lookup_checkbox" type="checkbox">
                 <label for="lookup_checkbox">Grammar lookup</label>
             </div>
         </div>
     </div>
-    <div id="align"><button id="alignbutton">Align</button> <button id="saveasbutton">Save as...</button></div>
+    <div id="align">
+        <button id="alignbutton">Align</button>
+        <button id="saveasbutton">Save as...</button>
+    </div>
     <div id="output">
         <div id="errors"></div>
         <div id="suboutput">
-        <div id="alignment"></div>
-        <div id="wordlist"></div>
+            <div id="alignment"></div>
+            <div id="wordlist"></div>
         </div>
     </div>
 </body>
-
+</html>
