@@ -33,6 +33,7 @@ const alignCheck = async () => {
     _state.poemtitle = document.getElementById('poemtitle').value || '';
     _state.poemnum = document.getElementById('poemnum').value || '';
     _state.poet = document.getElementById('poet').value || '';
+    _state.translator = document.getElementById('poet').value || '';
 
     const output = document.getElementById('alignment');
     output.innerHTML = '';
@@ -155,6 +156,7 @@ const saveThis = () => {
             <title xml:lang="ta">${_state.poemtitle}</title> <num>${_state.poemnum}</num>.
             <persName xml:lang="ta">${_state.poet}</persName>
         </title>     
+        <editor role="translator" xml:lang="en">${_state.translator}</editor>
       </titleStmt>
       <publicationStmt><p/></publicationStmt>
       <sourceDesc>
